@@ -4,3 +4,4 @@ requests
 pandas
 requests
 Jinja2
+supabase
