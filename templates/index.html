@@ -1042,6 +1042,26 @@
             opacity: 0.5;
         }
         
+        /* 👉 Mobile responsive */
+@media (max-width: 768px) {
+  .cart-sidebar {
+    width: 100%;   /* full screen cart */
+  }
+
+  .cart-header {
+    padding: 1.2rem;
+  }
+
+  .cart-footer {
+    padding: 1.2rem;
+  }
+
+  .btn-checkout {
+    padding: 0.8rem;
+    font-size: 1rem;
+  }
+}
+
     </style>
 </head>
 <body>
@@ -1461,7 +1481,7 @@
         
         message += `\n💰 *Total: ₹${total.toFixed(2)}*\n\n✅ Please confirm my order.`;
         
-        let phoneNumber = "919876543210"; // Replace with your WhatsApp number
+        let phoneNumber = "919445578548"; // Replace with your WhatsApp number
         let url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
         window.open(url, '_blank');
 
