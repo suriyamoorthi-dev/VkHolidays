@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grow Your Own Microgreens Workshop | Uyir Ootam</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Hero */
+    .hero {
+      min-height: 70vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: linear-gradient(135deg, #2f6d3c, #72c178);
+      color: #fff;
+      padding: 3rem 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+    .hero-btn {
+      background: #fff;
+      color: #2f6d3c;
+      padding: 0.8rem 1.5rem;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .hero-btn:hover {
+      background: #2f6d3c;
+      color: #fff;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    }
+
+    /* Workshop Section */
+    .workshop {
+      padding: 4rem 1rem;
+      background: #f9fff9;
+      text-align: center;
+    }
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: #2f6d3c;
+      font-weight: bold;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      text-align: left;
+    }
+    .card h3 {
+      color: #2f6d3c;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+    .card ul li {
+      margin: 0.6rem 0;
+      position: relative;
+      padding-left: 1.5rem;
+    }
+    .card ul li::before {
+      content: "✔";
+      color: #2f6d3c;
+      position: absolute;
+      left: 0;
+    }
+
+    .cta {
+      margin-top: 3rem;
+    }
+    .cta .hero-btn {
+      background: #2f6d3c;
+      color: #fff;
+      font-size: 1.1rem;
+      padding: 1rem 2rem;
+    }
+    .cta .hero-btn:hover {
+      background: #25612f;
+    }
+  </style>
+</head>
+<body>
+<!-- Hero Section -->
+<section class="hero relative">
+  <div class="hero-content">
+    <h1>Grow Your Own Microgreens Workshop</h1>
+    <p>Grow Microgreens And Turn Your Trays into Profits</p>
+    <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mt-4">
+      <a href="https://forms.gle/8EZehURHzTzBt8t36" target="_blank" class="hero-btn flex items-center gap-2">
+        <i class="fas fa-edit"></i> Enquire Now
+      </a>
+      <a href="/contact" class="hero-btn bg-green-600 hover:bg-green-700 text-white flex items-center gap-2">
+        <i class="fas fa-phone"></i> Contact Us
+      </a>
+      <a href="/home" class="hero-btn bg-gray-300 hover:bg-gray-400 text-gray-800 flex items-center gap-2">
+        <i class="fas fa-arrow-left"></i> Back
+      </a>
+    </div>
+  </div>
+</section>
+
+
+  <!-- Workshop Content -->
+  <section class="workshop">
+    <div class="container">
+      <div class="content-grid">
+        <div class="card">
+          <h3><i class="fas fa-seedling"></i> What You Will Learn</h3>
+          <ul>
+            <li>What are Microgreens and edible Microgreens?</li>
+            <li>Health benefits and uses of Microgreens</li>
+            <li>Step-by-step growing method</li>
+            <li>Common mistakes and solutions</li>
+            <li>How to grow using home items</li>
+            <li>Business and home setup tips</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3><i class="fas fa-gift"></i> Free Takeaways</h3>
+          <ul>
+            <li>Packaging with Pricing</li>
+            <li>Printed Guide</li>
+            <li>Recipes using Microgreens</li>
+            <li>Microgreens Growth Tracker Sheet</li>
+            <li>WhatsApp Support Group</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="cta">
+        <a href="https://forms.gle/8EZehURHzTzBt8t36" target="_blank" class="hero-btn">
+          <i class="fas fa-paper-plane"></i> Join the Workshop
+        </a>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

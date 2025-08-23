@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microgreens Memory Game</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: 'Inter', sans-serif; background: #E8F5E9; }
+  .card {
+    width: 80px; height: 80px; display:flex; align-items:center; justify-content:center;
+    background:#fff; border-radius:12px; cursor:pointer; font-size:2rem; user-select:none;
+    box-shadow:0 4px 6px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .card:hover { transform: scale(1.1); box-shadow:0 6px 10px rgba(0,0,0,0.15); }
+  .flipped { background:#A5D6A7; }
+</style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-5">
+
+<h1 class="text-3xl md:text-5xl font-bold text-green-700 mb-6 text-center">🧠 Microgreens Memory Game</h1>
+<p class="text-center mb-6 text-gray-700 max-w-md">Flip the cards to match the microgreens, fruits, or veggies. Match all pairs to win!</p>
+
+<div id="game-grid" class="grid grid-cols-4 gap-4"></div>
+<p id="score" class="mt-6 text-lg font-semibold text-green-700"></p>
+<button id="restart-btn" class="mt-4 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold shadow-md">Restart Game</button>
+
+<script>
+// Microgreens/Fruits/Vegetables Emojis
+const cardsArray = ['🥬','🌱','🥗','🍃','🥦','🍅','🥕','🌶️'];
+let gameCards = [...cardsArray, ...cardsArray]; // duplicate for pairs
+let flippedCards = [];
+let matchedPairs = 0;
+
+// Shuffle function
+function shuffle(array){
+  for(let i=array.length-1; i>0; i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function createGameGrid(){
+  matchedPairs=0;
+  document.getElementById('score').innerText = "Matched Pairs: 0";
+  const grid = document.getElementById('game-grid');
+  grid.innerHTML = '';
+  const shuffled = shuffle([...gameCards]);
+
+  shuffled.forEach((emoji, index) => {
+    const card = document.createElement('div');
+    card.classList.add('card');
+    card.dataset.emoji = emoji;
+    card.dataset.index = index;
+    card.innerText = '';
+    card.addEventListener('click', flipCard);
+    grid.appendChild(card);
+  });
+}
+
+// Flip Card Logic
+function flipCard(){
+  if(this.classList.contains('flipped') || flippedCards.length===2) return;
+
+  this.classList.add('flipped');
+  this.innerText = this.dataset.emoji;
+  flippedCards.push(this);
+
+  if(flippedCards.length===2){
+    if(flippedCards[0].dataset.emoji === flippedCards[1].dataset.emoji){
+      // Matched
+      matchedPairs++;
+      document.getElementById('score').innerText = `Matched Pairs: ${matchedPairs}`;
+      flippedCards = [];
+      if(matchedPairs === cardsArray.length){
+        setTimeout(()=>alert("🎉 You matched all pairs! Well done!"),300);
+      }
+    } else {
+      // Not matched
+      setTimeout(()=>{
+        flippedCards.forEach(c=>{ c.classList.remove('flipped'); c.innerText=''; });
+        flippedCards = [];
+      }, 800);
+    }
+  }
+}
+
+// Restart Game
+document.getElementById('restart-btn').addEventListener('click', createGameGrid);
+
+createGameGrid(); // initial call
+</script>
+
+</body>
+</html>

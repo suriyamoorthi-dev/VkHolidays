@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Cart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen text-gray-800">
+
+  <div class="max-w-4xl mx-auto py-12 px-4 md:px-6">
+    <h1 class="text-3xl font-bold mb-6">🛒 My Cart</h1>
+
+    <div id="cartItems" class="space-y-4"></div>
+
+    <div id="cartSummary" class="mt-8 bg-white p-6 rounded-xl shadow-lg hidden">
+      <h2 class="text-xl font-semibold mb-4">Order Summary</h2>
+      <p id="totalAmount" class="text-lg font-bold text-green-700"></p>
+      <button onclick="checkout()" 
+              class="mt-4 w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-bold">
+        Proceed to Checkout
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function loadCart() {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      let cartContainer = document.getElementById("cartItems");
+      let cartSummary = document.getElementById("cartSummary");
+      let totalAmount = document.getElementById("totalAmount");
+
+      cartContainer.innerHTML = "";
+
+      if (cart.length === 0) {
+        cartContainer.innerHTML = `<p class="text-gray-500">Your cart is empty 🛒</p>`;
+        cartSummary.classList.add("hidden");
+        return;
+      }
+
+      let total = 0;
+      cart.forEach((item, index) => {
+        let subtotal = item.price * item.qty;
+        total += subtotal;
+
+        cartContainer.innerHTML += `
+          <div class="flex justify-between items-center bg-white p-4 rounded-lg shadow">
+            <div>
+              <p class="font-semibold">${item.name}</p>
+              <p class="text-gray-500">₹${item.price} x ${item.qty}</p>
+              <p class="text-green-600 font-bold">₹${subtotal}</p>
+            </div>
+            <button onclick="removeItem(${index})" 
+              class="text-red-600 hover:text-red-800 font-bold">Remove</button>
+          </div>
+        `;
+      });
+
+      totalAmount.innerText = `Total: ₹${total}`;
+      cartSummary.classList.remove("hidden");
+    }
+
+    function removeItem(index) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      loadCart();
+    }
+
+    function checkout() {
+      alert("✅ Checkout process started!");
+      // Here you can redirect to payment/WhatsApp order etc.
+    }
+
+    loadCart();
+  </script>
+
+</body>
+</html>

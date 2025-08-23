@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkout</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+  <div class="max-w-lg mx-auto py-10">
+    <h1 class="text-2xl font-bold mb-6">✅ Checkout</h1>
+
+    <form id="checkoutForm" class="space-y-4">
+      <input type="text" name="name" placeholder="Your Name" class="w-full p-2 border rounded" required>
+      <input type="tel" name="phone" placeholder="Phone Number" class="w-full p-2 border rounded" required>
+      <textarea name="address" placeholder="Delivery Address" class="w-full p-2 border rounded" required></textarea>
+
+      <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded w-full">
+        Place Order via WhatsApp
+      </button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("checkoutForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const name = e.target.name.value;
+      const phone = e.target.phone.value;
+      const address = e.target.address.value;
+
+      // Build order summary (cart items from backend Jinja)
+      let message = `🛒 New Order%0A`;
+      message += `👤 Name: ${name}%0A`;
+      message += `📞 Phone: ${phone}%0A`;
+      message += `🏠 Address: ${address}%0A%0A`;
+
+      {% for item in items %}
+        message += `- {{ item.product.name }} x {{ item.qty }} = ₹{{ item.subtotal }}%0A`;
+      {% endfor %}
+
+      message += `%0A💰 Total: ₹{{ total }}`;
+
+      // Your business WhatsApp number
+      const whatsappNumber = "91XXXXXXXXXX"; 
+
+      window.open(`https://wa.me/${whatsappNumber}?text=${message}`, "_blank");
+    });
+  </script>
+</body>
+</html>

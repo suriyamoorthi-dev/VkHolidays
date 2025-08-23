@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uyir Ootam – Microgreens for Life</title>
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /* ------------------------- */
+        /* --- Global Styles & Variables --- */
+        /* ------------------------- */
+        :root {
+            --primary-green: #1E4620;
+            --accent-gold: #D4AF37;
+            --dark-text: #2c3e50;
+            --light-text: #FBFBFB;
+            --background-cream: #FDFCF7;
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Lato', sans-serif;
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            --border-radius: 12px;
+            --transition-fast: 0.3s ease;
+            --spacing-base: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--background-cream);
+            color: var(--dark-text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        a:focus-visible,
+        button:focus-visible {
+            outline: 2px solid var(--accent-gold);
+            outline-offset: 2px;
+        }
+
+        /* Animation Keyframes */
+        @keyframes slideUpFadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ------------------------- */
+        /* --- Hero Section --- */
+        /* ------------------------- */
+        .hero {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            min-height: 100vh;
+            padding: 0 20px;
+            background: url('https://images.unsplash.com/photo-1536630596251-b12ba0d9f7d4?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover no-repeat fixed;
+            color: var(--light-text);
+            position: relative;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom right, rgba(30,70,32,0.6), rgba(30,70,32,0.3));
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+        }
+
+        .hero h1 {
+            font-family: var(--font-heading);
+            font-size: clamp(3rem, 6vw, 4.5rem);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+            animation: slideUpFadeIn 1s ease-out;
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            margin-bottom: 40px;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 400;
+            animation: slideUpFadeIn 1.3s ease-out;
+        }
+
+        /* FIXED BUTTON CONTAINER */
+        .hero-buttons {
+            display: flex;
+            gap: 20px; /* Equal spacing between all buttons */
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 800px; /* Container width to accommodate 3 buttons */
+            margin: 0 auto;
+        }
+
+        /* FIXED BUTTON STYLES - All buttons same size and colors */
+        .hero-buttons a.hero-btn {
+            flex: 1 1 220px; /* Equal flex basis for consistent sizing */
+            min-width: 220px; /* Minimum width for consistency */
+            max-width: 240px; /* Maximum width to prevent oversizing */
+            text-align: center;
+            padding: 16px 20px; /* Consistent padding */
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border: 2px solid rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.15); /* Same glass effect for all */
+            color: var(--light-text); /* Same text color for all */
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        /* CONSISTENT HOVER EFFECTS - All buttons have same hover behavior */
+        .hero-buttons a.hero-btn:hover {
+            background: rgba(212,175,55,0.25); /* Same gold tint for all */
+            color: var(--light-text); /* Keep text white for readability */
+            border-color: var(--accent-gold); /* Same gold border for all */
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(212,175,55,0.3); /* Same gold glow */
+            backdrop-filter: blur(15px);
+        }
+
+        /* ACTIVE STATE - Same for all buttons */
+        .hero-buttons a.hero-btn:active {
+            transform: translateY(-2px) scale(1.01);
+            transition-duration: 0.1s;
+        }
+
+        /* FOCUS STATE - Same for all buttons */
+        .hero-buttons a.hero-btn:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.5), 0 12px 35px rgba(212,175,55,0.3);
+        }
+
+        /* Icon styling consistency */
+        .hero-buttons a.hero-btn i {
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        /* ------------------------- */
+        /* --- About Section --- */
+        /* ------------------------- */
+        .about-section {
+            padding: 100px var(--spacing-base);
+        }
+
+        .about-container {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 50px;
+            max-width: 1100px;
+            margin: 0 auto;
+            align-items: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .about-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .about-image {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .about-image:hover {
+            transform: scale(1.03);
+            box-shadow: 0 18px 45px rgba(0,0,0,0.2);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .about-text h2 {
+            font-family: var(--font-heading);
+            font-size: 2.8rem;
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .about-text h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 60%;
+            height: 3px;
+            background-color: var(--accent-gold);
+        }
+
+        .about-text p {
+            margin-bottom: 20px;
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: #444;
+        }
+
+        .about-text .highlight {
+            color: var(--primary-green);
+            font-weight: 700;
+            font-style: italic;
+        }
+
+        /* ------------------------- */
+        /* --- Footer --- */
+        /* ------------------------- */
+        .footer {
+            text-align: center;
+            padding: 40px var(--spacing-base);
+            font-weight: 700;
+            color: var(--light-text);
+            background: var(--primary-green);
+        }
+
+        /* ------------------------- */
+        /* --- Media Queries --- */
+        /* ------------------------- */
+        @media (max-width: 900px) {
+            .about-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            .about-image {
+                max-height: 400px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-buttons {
+                max-width: 600px;
+                gap: 16px;
+            }
+            
+            .hero-buttons a.hero-btn {
+                flex: 1 1 180px;
+                min-width: 180px;
+                max-width: 200px;
+                font-size: 0.9rem;
+                padding: 14px 16px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero-buttons {
+                flex-direction: column;
+                width: 90%;
+                max-width: 320px;
+                gap: 16px;
+            }
+            
+            .hero-buttons a.hero-btn {
+                flex: 1 1 auto;
+                min-width: auto;
+                max-width: none;
+                width: 100%;
+                font-size: 1rem;
+                padding: 16px 20px;
+            }
+            
+            .about-text h2 {
+                font-size: 2.2rem;
+            }
+            .about-text p {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-buttons {
+                width: 95%;
+                max-width: 280px;
+            }
+            
+            .hero-buttons a.hero-btn {
+                font-size: 0.95rem;
+                padding: 14px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Uyir Ootam</h1>
+        <p>Bigger Nutrients in Smaller Greens</p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('home') }}" class="hero-btn shop-btn">
+                <i class="fas fa-shopping-cart"></i> Shop Now
+            </a>
+            <a href="#about" class="hero-btn about-btn">
+                <i class="fas fa-leaf"></i> Our Story
+            </a>
+            <a href="{{ url_for('course') }}" class="hero-btn course-btn">
+                <i class="fas fa-chalkboard-teacher"></i> Learn to Grow Microgreens
+            </a>
+        </div>
+    </div>
+</section>
+
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="about-container">
+            <div class="about-image">
+                <img src="https://static.vecteezy.com/system/resources/thumbnails/037/778/928/small_2x/ai-generated-microgreens-sprouts-healthy-and-fresh-concept-of-home-gardening-and-growing-greenery-indoors-photo.jpg" alt="Hands holding fresh microgreens">
+            </div>
+            <div class="about-text">
+                <h2>Nourishment for Life</h2>
+                <p>I am <strong>Reshmaa, Founder of Uyir Ootam</strong>. My journey began with a personal struggle against lactose intolerance, which ignited a lifelong passion for nutrient-dense, natural foods.</p>
+                <p>Inspired by my farming roots and the timeless principles of <em>Nammalvar</em>, I discovered the magic of microgreens. These tiny greens were not just food, but a powerful, <span class="highlight">gut-friendly solution</span> to my nutritional needs.</p>
+                <p><strong>Uyir Ootam</strong> was born from this discovery—a promise to deliver true nourishment for life, cultivated with care and organic integrity.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        Uyir Ootam Microgreens – Freshly Grown in India.
+    </footer>
+
+    <script>
+        // Fade-in About Section on Scroll
+        const aboutContainer = document.querySelector('.about-container');
+        const revealSection = () => {
+            const top = aboutContainer.getBoundingClientRect().top;
+            const trigger = window.innerHeight / 1.2;
+            if(top < trigger) aboutContainer.classList.add('visible');
+        }
+        window.addEventListener('scroll', revealSection);
+        window.addEventListener('load', revealSection);
+    </script>
+
+</body>
+</html>

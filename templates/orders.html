@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Orders - Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+  <div class="max-w-6xl mx-auto py-8">
+    <h1 class="text-3xl font-bold mb-6">📦 Orders</h1>
+
+    {% if orders %}
+      {% for order_data in orders %}
+        <div class="bg-white shadow-md rounded-lg p-6 mb-6 border">
+          <!-- Order Info -->
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold">Order #{{ order_data.order.id }}</h2>
+            <span class="px-3 py-1 text-sm rounded-full 
+              {% if order_data.order.status == 'Pending' %}
+                bg-yellow-200 text-yellow-800
+              {% elif order_data.order.status == 'Completed' %}
+                bg-green-200 text-green-800
+              {% else %}
+                bg-gray-200 text-gray-800
+              {% endif %}
+            ">
+              {{ order_data.order.status }}
+            </span>
+          </div>
+
+          <p><span class="font-semibold">Customer:</span> {{ order_data.order.customer_name }}</p>
+          <p><span class="font-semibold">Phone:</span> {{ order_data.order.phone }}</p>
+          <p><span class="font-semibold">Address:</span> {{ order_data.order.address }}</p>
+          <p class="text-sm text-gray-500">Created: {{ order_data.order.created_at }}</p>
+
+          <!-- Items -->
+          <h3 class="mt-4 font-bold">Items:</h3>
+          <ul class="divide-y divide-gray-200 mt-2">
+            {% set order_total = 0 %}
+            {% for item in order_data['items'] %}
+              {% set line_total = item.price * item.quantity %}
+              {% set order_total = order_total + line_total %}
+              <li class="flex items-center py-3">
+                <div class="flex-1">
+                  <p class="font-medium">{{ item.name }} ({{ item.grams }}g)</p>
+                  <p class="text-sm text-gray-500">₹{{ item.price }} × {{ item.quantity }}</p>
+                </div>
+                <div class="font-semibold">
+                  ₹{{ line_total }}
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+
+          <!-- Total -->
+          <div class="flex justify-end mt-4">
+            <p class="text-lg font-bold">
+              Total: ₹{{ order_total }}
+            </p>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-gray-500">No orders available.</p>
+    {% endif %}
+  </div>
+
+</body>
+</html>
