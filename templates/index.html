@@ -41,16 +41,16 @@
        
         /* Floating Organic Elements Background */
         .floating-elements {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            overflow: hidden;
-        }
-        
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;      /* -1 illa, 1 podunga */
+    overflow: visible; /* cut aagama */
+}
+
         .floating-leaf {
             position: absolute;
             font-size: 2rem;
@@ -170,14 +170,6 @@
             transform: translateY(-2px);
         }
         
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--white);
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
         
         /* Hero Section */
         .hero {
@@ -882,6 +874,7 @@
  
 /* Responsive Design */
 
+
 @media (max-width: 768px) {
   .hero {
     min-height: auto;
@@ -993,6 +986,27 @@
             }
         }
      
+        @media (max-width: 768px) {
+  .floating-leaf {
+    font-size: 1.2rem;
+    opacity: 0.2;
+    animation: floatUpMobile 15s linear infinite; /* slower */
+  }
+
+  @keyframes floatUpMobile {
+    0% {
+      transform: translateY(100vh) translateX(0);
+      opacity: 0;
+    }
+    30% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-20vh) translateX(-10px);
+      opacity: 0;
+    }
+  }
+}
         .mobile-menu {
   position: absolute;
   top: 100%;
@@ -1100,6 +1114,12 @@
              <button id="menuBtn" class="text-2xl md:hidden">
   <i class="fas fa-bars"></i>
 </button>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/home"><i class="fas fa-arrow-left"></i> Back to Home</a>
+  <a href="/contact"><i class="fas fa-phone"></i> Contact</a>
+  <a href="/products"><i class="fas fa-leaf"></i> Products</a>
+  <a href="/memory-game"><i class="fas fa-leaf"></i> game</a>
+</div>
 
   </div>
 
@@ -1116,7 +1136,7 @@
                     <a href="#products" class="btn-primary">
                         <i class="fas fa-leaf"></i> Shop Now
                     </a>
-                    <a href="/about" class="btn-secondary">
+                    <a href="/couse" class="btn-secondary">
                         <i class="fas fa-play"></i> Learn More
                     </a>
                 </div>
