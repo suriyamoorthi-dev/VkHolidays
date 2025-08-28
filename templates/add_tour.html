@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add New Tour - VK Holidays Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <nav class="bg-white shadow p-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-indigo-600">VK Holidays Admin</h1>
+    <div>
+      <a href="/admin" class="text-gray-700 hover:text-indigo-600 px-3">Dashboard</a>
+      <a href="/admin/bookings" class="text-gray-700 hover:text-indigo-600 px-3">Bookings</a>
+      <a href="/admin/tours" class="text-gray-700 hover:text-indigo-600 px-3">All Tours</a>
+    </div>
+  </nav>
+
+  <main class="max-w-4xl mx-auto p-6">
+    <h2 class="text-2xl font-bold mb-6">➕ Add New Tour</h2>
+
+    <form action="/admin/add-tour" method="POST" class="bg-white p-6 rounded-xl shadow-md grid gap-4">
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Tour Name</label>
+        <input type="text" name="name" required
+               class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Location</label>
+        <input type="text" name="location" required
+               class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Duration</label>
+        <input type="text" name="duration" placeholder="e.g., 3 Days / 2 Nights" required
+               class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Price (INR)</label>
+        <input type="number" name="price" required
+               class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Image URLs (comma separated)</label>
+        <textarea name="image_urls" rows="3" placeholder="https://image1.jpg, https://image2.jpg" 
+                  class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Description</label>
+        <textarea name="description" rows="5" placeholder="Describe the tour..."
+                  class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <input type="checkbox" name="is_active" id="is_active" checked class="h-4 w-4 text-indigo-600">
+        <label for="is_active" class="text-sm text-gray-700 font-medium">Active</label>
+      </div>
+
+      <button type="submit" class="bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition">
+        Add Tour
+      </button>
+    </form>
+  </main>
+</body>
+</html>

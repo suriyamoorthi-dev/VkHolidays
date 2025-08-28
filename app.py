@@ -80,7 +80,7 @@ def landing():
 def home():
     """Show only active products to customers"""
     try:
-        products = supabase.table("products").select("*").eq("is_active", True).execute()
+        products = supabase.table("tours").select("*").eq("is_active", True).execute()
         return render_template("index.html", products=products.data or [])
     except Exception as e:
         print(f"Error in home: {e}")
@@ -178,257 +178,239 @@ def place_order():
 
 @app.route("/product/<int:product_id>", methods=["GET", "POST"])
 def product_page(product_id):
-    """Public product page with reviews"""
     try:
-        product = supabase.table("products").select("*").eq("id", product_id).single().execute()
-        if not product.data:
+        # Fetch the product
+        product = supabase.table("tours").select("*").eq("id", product_id).single().execute().data
+        if not product:
             return "Product not found", 404
 
         if request.method == "POST":
+            # Grab form values
             name = request.form.get("name")
-            rating = int(request.form.get("rating", 5))
-            comment = request.form.get("comment", "")
+            email = request.form.get("email")
+            phone = request.form.get("phone")
+            travel_date = request.form.get("travel_date")
+            people = request.form.get("people")
 
-            supabase.table("reviews").insert({
+            # Save booking
+            supabase.table("bookings").insert({
                 "product_id": product_id,
                 "name": name,
-                "rating": rating,
-                "comment": comment
+                "email": email,
+                "phone": phone,
+                "travel_date": travel_date,
+                "people": people
             }).execute()
 
-            return redirect(f"/product/{product_id}")
+            return render_template("success.html", product=product, name=name)
 
-        # Fetch reviews
-        reviews = (
-            supabase.table("reviews")
-            .select("*")
-            .eq("product_id", product_id)
-            .order("created_at", desc=True)
-            .execute()
-        )
+        return render_template("product.html", product=product)
 
-        return render_template(
-            "product_page.html",
-            product=product.data,
-            reviews=reviews.data or []
-        )
     except Exception as e:
-        print(f"Error in product_page: {e}")
-        return "Error loading product", 500
+        # Print error in console for debugging
+        import traceback
+        traceback.print_exc()
+        return f"Error loading product {product_id}: {e}", 500
 
 @app.route("/memory-game")
 def memory_game():
     return render_template("memory_game.html")  # save your HTML as templates/memory_game.html
 
-# ---------------- ADMIN SIDE ----------------
+
+# -------------------- Admin Dashboard --------------------
 
 @app.route("/admin")
 def admin_dashboard():
     try:
-        # Fetch all products at once
-        products_resp = supabase.table("products").select("*").execute()
-        products = products_resp.data if products_resp.data else []
+        tours_resp = supabase.table("tours").select("*").execute()
+        print("RAW TOURS RESPONSE:", tours_resp)
+        tours = tours_resp.data if tours_resp.data else []
+        print("PARSED TOURS:", tours)
 
-        # Ensure every product has a valid image_url
-        for product in products:
-            image_url = product.get("image_url")
-            if not image_url or not image_url.strip():
-                # Fallback to safe online placeholder
-                product["image_url"] = "https://via.placeholder.com/150"
+        total_tours = len(tours)
+        total_price = 0.0
 
-        # Create a lookup dict for faster access by product ID
-        products_map = {p["id"]: p for p in products}
+        for tour in tours:
+            # Handle price safely
+            try:
+                if tour.get("price") is None:
+                    tour["price"] = 0.0
+                else:
+                    tour["price"] = float(tour["price"])
+            except:
+                tour["price"] = 0.0
 
-        # Fetch recent orders
-        orders_resp = supabase.table("orders").select("*").order("created_at", desc=True).limit(10).execute()
-        orders_data = []
+            total_price += tour["price"]
 
-        if orders_resp.data:
-            for order in orders_resp.data:
-                order_id = order["id"]
+            # Handle images
+            if tour.get("images") and isinstance(tour["images"], list):
+                tour["images_list"] = tour["images"]
+            elif tour.get("image_url"):
+                tour["images_list"] = [tour["image_url"]]
+            else:
+                tour["images_list"] = ["https://via.placeholder.com/150"]
 
-                # Fetch items for this order
-                order_items_resp = supabase.table("order_items").select("*").eq("order_id", order_id).execute()
-                order_items_list = []
-                order_total = 0
+        stats = {
+            "total_tours": total_tours,
+            "total_price": total_price
+        }
 
-                if order_items_resp.data:
-                    for item in order_items_resp.data:
-                        product = products_map.get(item["product_id"])
-                        if product:
-                            price = float(product.get("price", 0))
-                            qty = int(item.get("quantity", 1))
-                            subtotal = price * qty
-                            order_total += subtotal
+        return render_template("admin_tours.html", tours=tours, stats=stats)
 
-                            order_items_list.append({
-                                "product_name": product.get("name", "Unknown Product"),
-                                "grams": item.get("grams", ""),
+    except Exception as e:
+        print("Error loading admin dashboard:", e)
+        return "Error loading admin dashboard"
+
+@app.route("/emi")
+def emi_page():
+    try:
+        # Fetch all tours
+        tours_resp = supabase.table("tours").select("*").execute()
+        tours = tours_resp.data if tours_resp.data else []
+
+        # Calculate EMI options for each tour
+        for tour in tours:
+            price = tour.get("price") or 0
+            try:
+                price = float(price)
+            except:
+                price = 0
+
+            tour["emi_options"] = {
+                "3 months": round(price / 3, 2),
+                "6 months": round(price / 6, 2),
+                "12 months": round(price / 12, 2),
+            }
+
+        return render_template("emi.html", tours=tours)
+
+    except Exception as e:
+        print("Error loading EMI page:", e)
+        return "Error loading EMI page"
+
+# -------------------- All Bookings --------------------
+@app.route("/admin/bookings")
+def admin_bookings():
+    try:
+        bookings_resp = supabase.table("bookings").select("*").order("created_at", desc=True).execute()
+        bookings_data = []
+
+        tours_resp = supabase.table("tours").select("*").execute()
+        tours_map = {t["id"]: t for t in tours_resp.data} if tours_resp.data else {}
+
+        if bookings_resp.data:
+            for booking in bookings_resp.data:
+                items_resp = supabase.table("booking_items").select("*").eq("booking_id", booking["id"]).execute()
+                booking_items_list = []
+                total_amount = 0
+
+                if items_resp.data:
+                    for item in items_resp.data:
+                        tour = tours_map.get(item["tour_id"])
+                        if tour:
+                            price = float(tour.get("price", 0))
+                            people = int(item.get("people", 1))
+                            subtotal = price * people
+                            total_amount += subtotal
+                            booking_items_list.append({
+                                "tour_name": tour.get("name", "Unknown Tour"),
+                                "people": people,
                                 "price": price,
-                                "quantity": qty,
                                 "subtotal": subtotal
                             })
 
-                orders_data.append({
-                    "order": order,
-                    "order_items": order_items_list,
-                    "order_total": order_total
+                bookings_data.append({
+                    "booking": booking,
+                    "booking_items": booking_items_list,
+                    "total_amount": total_amount
                 })
 
-        # Calculate stats
-        stats = {
-            "total_products": len(products),
-            "pending_orders": sum(1 for o in orders_data if o["order"].get("status", "").lower() == "pending"),
-            "completed_orders": sum(1 for o in orders_data if o["order"].get("status", "").lower() == "completed"),
-            "total_revenue": sum(o["order_total"] for o in orders_data if o["order"].get("status", "").lower() == "completed")
-        }
-
-        return render_template("admin.html", products=products, orders=orders_data, stats=stats)
+        return render_template("bookings.html", bookings=bookings_data)
 
     except Exception as e:
-        import traceback
-        traceback.print_exc()
-        return render_template(
-            "admin.html",
-            products=[],
-            orders=[],
-            stats={
-                "total_products": 0,
-                "pending_orders": 0,
-                "completed_orders": 0,
-                "total_revenue": 0
-            }
-        )
+        print(f"Error fetching bookings: {e}")
+        return render_template("bookings.html", bookings=[], error=str(e))
 
-@app.route("/admin/orders")
-def admin_orders():
-    """Show all orders with items"""
-    try:
-        print("🔍 Fetching orders...")
-        
-        # Fetch all orders
-        orders = supabase.table("orders") \
-            .select("*") \
-            .order("created_at", desc=True) \
-            .execute()
+# -------------------- Add Tour --------------------
 
-        print(f"📊 Orders found: {len(orders.data) if orders.data else 0}")
-
-        orders_data = []
-
-        if orders.data:
-            for order in orders.data:
-                print(f"🔄 Processing order ID: {order['id']}")
-                
-                # Fetch items for this order
-                items = supabase.table("order_items") \
-                    .select("*") \
-                    .eq("order_id", order["id"]) \
-                    .execute()
-
-                print(f"📦 Items found for order {order['id']}: {len(items.data) if items.data else 0}")
-
-                formatted_items = []
-                calculated_total = 0
-
-                if items.data:
-                    for item in items.data:
-                        price = float(item.get("price", 0))
-                        quantity = int(item.get("quantity", 1))
-                        subtotal = price * quantity
-                        calculated_total += subtotal
-
-                        formatted_items.append({
-                            "name": item.get("product_name", "Unknown Product"),
-                            "grams": item.get("grams", ""),
-                            "price": price,
-                            "quantity": quantity,
-                            "subtotal": subtotal
-                        })
-
-                # Use stored total or calculated total
-                final_total = order.get("total", calculated_total)
-
-                orders_data.append({
-                    "order": order,
-                    "items": formatted_items,
-                    "total": final_total
-                })
-
-        print(f"✅ Final orders processed: {len(orders_data)}")
-        return render_template("orders.html", orders=orders_data)
-        
-    except Exception as e:
-        print(f"❌ Error in admin_orders: {str(e)}")
-        return render_template("orders.html", orders=[], error=str(e))
-
-@app.route("/admin/add", methods=["GET", "POST"])
-def add_product():
-    """Add new product"""
+@app.route("/admin/add-tour", methods=["GET", "POST"])
+def add_tour():
     if request.method == "POST":
         try:
-            supabase.table("products").insert({
-                "name": request.form["name"],
-                "description": request.form["description"],
-                "grams": request.form["grams"],
-                "price": float(request.form["price"]),
-                "image_url": request.form["image_url"],
-                "is_active": True
-            }).execute()
-            return redirect(url_for("admin_dashboard"))
-        except Exception as e:
-            print(f"Error adding product: {e}")
-            return "Error adding product", 500
+            # Safe price conversion
+            price = request.form.get("price")
+            price = float(price) if price else 0.0
 
-    return render_template("add_product.html")
+            # Handle multiple images (comma-separated from form)
+            images = request.form.get("images", "")
+            images_list = [img.strip() for img in images.split(",") if img.strip()]
+            if not images_list:
+                images_list = ["https://via.placeholder.com/150"]
 
-@app.route("/admin/edit/<int:product_id>", methods=["GET", "POST"])
-def edit_product(product_id):
-    """Edit product"""
-    if request.method == "POST":
-        try:
-            supabase.table("products").update({
-                "name": request.form["name"],
-                "description": request.form["description"],
-                "grams": request.form["grams"],
-                "price": float(request.form["price"]),
-                "image_url": request.form["image_url"],
+            # Insert into tours table
+            supabase.table("tours").insert({
+                "name": request.form.get("name", "Unnamed Tour"),
+                "location": request.form.get("location", ""),
+                "duration": request.form.get("duration", ""),
+                "price": price,
+                "images": images_list,        # match DB column
+                "description": request.form.get("description", ""),
                 "is_active": "is_active" in request.form
-            }).eq("id", product_id).execute()
+            }).execute()
+
+            return redirect(url_for("admin_dashboard"))
+
+        except Exception as e:
+            print(f"Error adding tour: {e}")
+            return f"Error adding tour: {e}", 500
+
+    return render_template("add_tour.html")
+
+# -------------------- Edit Tour --------------------
+@app.route("/admin/edit-tour/<int:tour_id>", methods=["GET", "POST"])
+def edit_tour(tour_id):
+    if request.method == "POST":
+        try:
+            supabase.table("tours").update({
+                "name": request.form["name"],
+                "location": request.form["location"],
+                "duration": request.form["duration"],
+                "price": float(request.form["price"]),
+                "image_urls": request.form["image_urls"],
+                "description": request.form["description"],
+                "is_active": "is_active" in request.form
+            }).eq("id", tour_id).execute()
             return redirect(url_for("admin_dashboard"))
         except Exception as e:
-            print(f"Error editing product: {e}")
-            return "Error editing product", 500
+            print(f"Error editing tour: {e}")
+            return "Error editing tour", 500
 
     try:
-        product = supabase.table("products").select("*").eq("id", product_id).single().execute()
-        return render_template("edit_product.html", product=product.data)
+        tour_resp = supabase.table("tours").select("*").eq("id", tour_id).single().execute()
+        return render_template("edit_tour.html", tour=tour_resp.data)
     except Exception as e:
-        print(f"Error fetching product: {e}")
-        return "Product not found", 404
+        print(f"Error fetching tour: {e}")
+        return "Tour not found", 404
 
-@app.route("/admin/delete/<int:product_id>")
-def delete_product(product_id):
-    """Delete product"""
+# -------------------- Delete Tour --------------------
+@app.route("/admin/delete-tour/<int:tour_id>")
+def delete_tour(tour_id):
     try:
-        supabase.table("products").delete().eq("id", product_id).execute()
+        supabase.table("tours").delete().eq("id", tour_id).execute()
         return redirect(url_for("admin_dashboard"))
     except Exception as e:
-        print(f"Error deleting product: {e}")
-        return "Error deleting product", 500
-    
-@app.route("/admin/orders/update/<int:order_id>/<string:new_status>")
-def update_order_status(order_id, new_status):
-    """Update order status (Pending → Shipped → Completed)"""
-    try:
-        # Only update the status, do not delete order or items
-        supabase.table("orders").update({"status": new_status}).eq("id", order_id).execute()
-        print(f"✅ Order {order_id} status updated to {new_status}")
+        print(f"Error deleting tour: {e}")
+        return "Error deleting tour", 500
 
-        return redirect(url_for("admin_orders"))
+# -------------------- Update Booking Status --------------------
+@app.route("/admin/bookings/update/<int:booking_id>/<string:new_status>")
+def update_booking_status(booking_id, new_status):
+    try:
+        supabase.table("bookings").update({"status": new_status}).eq("id", booking_id).execute()
+        return redirect(url_for("admin_bookings"))
     except Exception as e:
-        print(f"❌ Error updating order status: {e}")
-        return redirect(url_for("admin_orders"))
+        print(f"Error updating booking status: {e}")
+        return redirect(url_for("admin_bookings"))
 
 # ---------------- API ROUTES ----------------
 @app.route("/api/orders")
@@ -462,9 +444,15 @@ def about():
     return render_template("about.html")
 
 
-@app.route("/course")
-def course():
-    return render_template("course.html")
+@app.route("/tours")
+def tours():
+    # return tours page
+    return render_template("tours.html")
+
+@app.route("/bookings")
+def bookings():
+    # return bookings page
+    return render_template("bookings.html")
 
 
 # ---------------- Run App ----------------
